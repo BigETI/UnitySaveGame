@@ -36,6 +36,18 @@ namespace UnitySaveGame
         }
 
         /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="saveGameData">Save game data</param>
+        public ASaveGameData(ASaveGameData saveGameData)
+        {
+            if (saveGameData != null)
+            {
+                LastSaveDateTime = saveGameData.LastSaveDateTime;
+            }
+        }
+
+        /// <summary>
         /// Update last save date and time
         /// </summary>
         public void UpdateLastSaveDateTime()
