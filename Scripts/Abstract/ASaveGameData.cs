@@ -50,9 +50,6 @@ namespace UnitySaveGame
         /// <summary>
         /// Update last save date and time
         /// </summary>
-        public void UpdateLastSaveDateTime()
-        {
-            lastSaveDateTime = new DateTimeData(DateTime.Now);
-        }
+        public void UpdateLastSaveDateTime() => lastSaveDateTime = new DateTimeData(DateTime.Now);
     }
 }
