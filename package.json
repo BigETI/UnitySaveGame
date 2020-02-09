@@ -1,0 +1,21 @@
+{
+    "name": "com.bigeti.save-game",
+    "version": "1.0.0",
+    "displayName": "Save game system for Unity",
+    "description": "This package contains a save game system for Unity.",
+    "dependencies": {},
+    "keywords": [
+        "save",
+        "game",
+        "state",
+        "states",
+        "savegame",
+        "savestate",
+        "savestates"
+    ],
+    "author": {
+        "name": "Ethem Kurt",
+        "email": "bigeti.ethem@gmail.com",
+        "url": "https://bigeti.de/"
+    }
+}
