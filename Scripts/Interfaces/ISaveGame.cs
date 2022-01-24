@@ -4,10 +4,18 @@
 namespace UnitySaveGame
 {
     /// <summary>
-    /// Save game interface
+    /// An interface that represents a save game
     /// </summary>
-    internal interface ISaveGame
+    public interface ISaveGame<T> : IBaseSaveGame where T : ISaveGameData
     {
-        // ...
+        /// <summary>
+        /// Save game data
+        /// </summary>
+        T Data { get; }
+
+        /// <summary>
+        /// Backup save game data
+        /// </summary>
+        T BackupData { get; }
     }
 }

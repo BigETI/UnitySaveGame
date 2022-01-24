@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using UnityEngine;
+using UnitySaveGame.Data;
 
 /// <summary>
 /// Unity save game namespace
@@ -8,10 +9,10 @@ using UnityEngine;
 namespace UnitySaveGame
 {
     /// <summary>
-    /// Save game class
+    /// A class that describes a save game
     /// </summary>
     /// <typeparam name="T">Save game data type</typeparam>
-    public class SaveGame<T> : ISaveGame where T : ASaveGameData
+    public class SaveGame<T> : ISaveGame<T> where T : ASaveGameData
     {
         /// <summary>
         /// Save game data
@@ -37,15 +38,15 @@ namespace UnitySaveGame
                     {
                         try
                         {
-                            data = (T)(Activator.CreateInstance(typeof(T)));
+                            data = (T)Activator.CreateInstance(typeof(T));
                             Save();
                         }
                         catch
                         {
-                            Debug.LogWarning("It is recommended to implement a public default constructor for \"" + typeof(T).Name + "\".");
+                            Debug.LogWarning($"It is recommended to implement a public default constructor for \"{ typeof(T).Name }\".");
                             try
                             {
-                                data = (T)(Activator.CreateInstance(typeof(T), new object[] { null }));
+                                data = (T)Activator.CreateInstance(typeof(T), new object[] { null });
                                 Save();
                             }
                             catch (Exception e)
@@ -70,7 +71,7 @@ namespace UnitySaveGame
                 {
                     try
                     {
-                        backupData = (T)(Activator.CreateInstance(typeof(T), Data));
+                        backupData = (T)Activator.CreateInstance(typeof(T), Data);
                     }
                     catch (Exception e)
                     {
@@ -82,7 +83,7 @@ namespace UnitySaveGame
         }
 
         /// <summary>
-        /// Default constructor
+        /// Constructs a save game
         /// </summary>
         internal SaveGame()
         {
@@ -90,13 +91,13 @@ namespace UnitySaveGame
         }
 
         /// <summary>
-        /// Load save game
+        /// Loads save game
         /// </summary>
         /// <returns>"true" if successful, otherwise "false"</returns>
         public bool Load() => Load(SaveGames.DefaultSaveGamePath);
 
         /// <summary>
-        /// Load save game
+        /// Loads save game
         /// </summary>
         /// <param name="path">Save game path</param>
         /// <returns>"true" if successful, otherwise "false"</returns>
@@ -109,12 +110,10 @@ namespace UnitySaveGame
                 {
                     if (File.Exists(path))
                     {
-                        using (StreamReader reader = new StreamReader(File.Open(path, FileMode.Open)))
-                        {
-                            data = (T)(JsonUtility.FromJson(reader.ReadToEnd(), typeof(T)));
-                            backupData = (T)(Activator.CreateInstance(typeof(T), data));
-                            ret = true;
-                        }
+                        using StreamReader reader = new StreamReader(File.Open(path, FileMode.Open));
+                        data = (T)JsonUtility.FromJson(reader.ReadToEnd(), typeof(T));
+                        backupData = (T)Activator.CreateInstance(typeof(T), data);
+                        ret = true;
                     }
                 }
                 catch (Exception e)
@@ -126,13 +125,13 @@ namespace UnitySaveGame
         }
 
         /// <summary>
-        /// Save game
+        /// Saves game
         /// </summary>
         /// <returns>"true" if successful, otherwise "false"</returns>
         public bool Save() => Save(SaveGames.DefaultSaveGamePath);
 
         /// <summary>
-        /// Save game
+        /// Saves game
         /// </summary>
         /// <param name="path">Save game path</param>
         /// <returns>"true" if successful, otherwise "false"</returns>
@@ -141,7 +140,7 @@ namespace UnitySaveGame
             bool ret = false;
             if ((data != null) && (path != null))
             {
-                string backup_path = path + ".backup";
+                string backup_path = $"{ path }.backup";
                 try
                 {
                     if (File.Exists(path))
@@ -149,13 +148,11 @@ namespace UnitySaveGame
                         File.Copy(path, backup_path, true);
                         File.Delete(path);
                     }
-                    using (StreamWriter writer = new StreamWriter(File.Open(path, FileMode.Create)))
-                    {
-                        data.UpdateLastSaveDateTime();
-                        writer.Write(JsonUtility.ToJson(data));
-                        backupData = (T)(Activator.CreateInstance(typeof(T), data));
-                        ret = true;
-                    }
+                    using StreamWriter writer = new StreamWriter(File.Open(path, FileMode.Create));
+                    data.UpdateLastSaveDateTime();
+                    writer.Write(JsonUtility.ToJson(data));
+                    backupData = (T)Activator.CreateInstance(typeof(T), data);
+                    ret = true;
                 }
                 catch (Exception e)
                 {
@@ -169,7 +166,7 @@ namespace UnitySaveGame
                     }
                     catch (Exception ex)
                     {
-                        Debug.LogError(ex.Message);
+                        Debug.LogError(ex);
                     }
                 }
                 try
@@ -179,22 +176,22 @@ namespace UnitySaveGame
                         File.Delete(backup_path);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception exc)
                 {
-                    Debug.LogError(ex.Message);
+                    Debug.LogError(exc);
                 }
             }
             return ret;
         }
 
         /// <summary>
-        /// Restore save game data from backup save game data
+        /// Restores save game data from backup save game data
         /// </summary>
         public void RestoreSaveGameDataFromBackupSaveGameData()
         {
             if (backupData != null)
             {
-                data = (T)(Activator.CreateInstance(typeof(T), backupData));
+                data = (T)Activator.CreateInstance(typeof(T), backupData);
             }
         }
     }

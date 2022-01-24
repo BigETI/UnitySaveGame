@@ -1,17 +1,16 @@
 ﻿using System;
 using UnityEngine;
-using UnitySaveGame.Data;
 
 /// <summary>
-/// Unity save game namespace
+/// Unity save game data namespace
 /// </summary>
-namespace UnitySaveGame
+namespace UnitySaveGame.Data
 {
     /// <summary>
-    /// Save game data interface
+    /// An abstract class that describes save game data
     /// </summary>
     [Serializable]
-    public abstract class ASaveGameData
+    public abstract class ASaveGameData : ISaveGameData
     {
         /// <summary>
         /// Last save date and time
@@ -26,17 +25,14 @@ namespace UnitySaveGame
         {
             get
             {
-                if (lastSaveDateTime == null)
-                {
-                    lastSaveDateTime = new DateTimeData(DateTime.Now);
-                }
+                lastSaveDateTime ??= new DateTimeData(DateTime.Now);
                 return lastSaveDateTime.DateTime;
             }
             set => lastSaveDateTime = new DateTimeData(value);
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructs save game data
         /// </summary>
         /// <param name="saveGameData">Save game data</param>
         public ASaveGameData(ASaveGameData saveGameData)
@@ -48,7 +44,7 @@ namespace UnitySaveGame
         }
 
         /// <summary>
-        /// Update last save date and time
+        /// Updates last save date and time
         /// </summary>
         public void UpdateLastSaveDateTime() => lastSaveDateTime = new DateTimeData(DateTime.Now);
     }
